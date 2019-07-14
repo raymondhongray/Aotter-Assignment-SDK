@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Aotter Assignment SDK</title>
+
+    <!-- SDK 請求 -->
+    <script src="http://localhost:3000/aotter-assignment-sdk.min.js"></script>
+
+    <script>
+      // 以 aotterAssignmentSDK.AdClient 建立實例，選擇網頁上 #aotter-ad-banner 元素做為廣告置入點
+      // elementID 參數為欲被掛載的網頁元素, type 參數為廣告的型態 (BANNER / VIDEO)
+      var acBanner = new aotterAssignmentSDK.AdClient({
+        type: 'BANNER',
+        elementID: 'aotter-ad-banner'
+      });
+
+      acBanner.echo('Hello aotter-SDK!');
+
+      // 監聽廣告載入成功
+      acBanner.onAdLoaded(function() {
+        console.log('Banner on-ad-loaded.');
+      });
+      // 監聽廣告載入失敗
+      acBanner.onAdFailed(function() {
+        console.log('Banner on-ad-failed.');
+      });
+      // 監聽廣告出現在畫面上超過 50% 至少一秒
+      acBanner.onAdImpression(function() {
+        console.log('Banner on-ad-impression.');
+      });
+
+      // 建立一個 video-type 廣告
+      var acVideo = new aotterAssignmentSDK.AdClient({
+        type: 'VIDEO',
+        elementID: 'aotter-ad-video'
+      });
+      acVideo.onAdLoaded(function() {
+        console.log('Video on-ad-loaded.');
+      });
+      acVideo.onAdFailed(function() {
+        console.log('Video on-ad-failed.');
+      });
+      acVideo.onAdImpression(function() {
+        console.log('Video on-ad-impression.');
+      });
+
+    </script>
+  </head>
+  <body>
+      <!-- banner 廣告置入點 -->
+      <div id="aotter-ad-banner"></div>
+
+      <!-- video 廣告置入點 -->
+      <div id="aotter-ad-video"></div>
+  </body>
+</html>

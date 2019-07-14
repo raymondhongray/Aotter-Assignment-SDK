@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+<style>
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  background: #d9d9d9;
+}
+.aotter-ad {
+  display: none;
+}
+#aotter-ad-video {
+  text-align: center;
+}
+#aotter-ad-video > a > .img-wapper {
+  display: inline-block;
+  position: relative;
+}
+.aotter-ad > a > div > .img {
+  width: 100%;
+}
+.aotter-ad > a > div > .img,
+#aotter-ad-banner > a .content {
+  max-width: 992px;
+  margin: 0 auto;
+  display: block;
+}
+.aotter-ad > a {
+  text-decoration: none;
+}
+#aotter-ad-banner > a > .content {
+  width: 100%;
+  background: #eaeaed;
+  padding: 1px 15px 10px 15px;
+}
+#aotter-ad-banner > a > .content > .domain-title {
+  color: #606678;
+  font-size: 24px;
+}
+#aotter-ad-banner > a > .content > .title {
+  color: #000;
+  font-size: 28px;
+}
+#aotter-ad-video > a > div > .title,
+#aotter-ad-video > a > div > .font-play {
+  position: absolute;
+}
+#aotter-ad-video > a > div > .title {
+  top: 8px;
+  left: 5%;
+  color: #f0f0f0;
+  font-size: 24px;
+}
+#aotter-ad-video > a > div > .font-play {
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  color: #6c6d68;
+  opacity: 0.7;
+}
+
+</style>
+</head>
+<body>
+  <% if (adType === 'banner') { %>
+  <div id="aotter-ad-banner" class="aotter-ad">
+    <a target="_blank" href=<%= href %>>
+      <div></div>
+      <div class="content">
+        <p class="domain-title">AGIRLS.AOTTER.NET</p>
+        <h2 class="title"><%= title %></h2>
+      </div>
+    </a>
+  </div>
+  <% } %>
+  <% if (adType === 'video') { %>
+  <div id="aotter-ad-video" class="aotter-ad">
+    <a target="_blank" href=<%= href %>>
+      <div class="img-wapper">
+        <h2 class="title"><%= title %></h2>
+        <i class="font-play fas fa-play-circle"></i>
+      </div>
+    </a>
+  </div>
+  <% } %>
+</body>
+<script>
+  var hasCalledImpressionUrl = false;
+  function extendImage() {
+    Image.prototype.load = function(url) {
+      var thisImg = this;
+      var xmlHTTP = new XMLHttpRequest();
+      xmlHTTP.open('GET', url, true);
+      xmlHTTP.responseType = 'arraybuffer';
+      xmlHTTP.onload = function(e) {
+        var blob = new Blob([this.response]);
+        thisImg.src = window.URL.createObjectURL(blob);
+      };
+      xmlHTTP.onprogress = function(e) {
+        thisImg.completedPercentage = parseInt((e.loaded / e.total) * 100);
+        postParentMessage({
+          iframeID: '<%= iframeID %>',
+          completedPercentage: thisImg.completedPercentage
+        });
+
+        if (thisImg.completedPercentage > 51) {
+          setTimeout(function() {
+            resizeParentIframe('<%= iframeID %>');
+            if (!hasCalledImpressionUrl) {
+              postParentMessage({
+                iframeID: '<%= iframeID %>',
+                moreThanHalfCompleted: true,
+                completedPercentage: thisImg.completedPercentage,
+                impressionUrl: '<%= impressionUrl %>'
+              });
+              hasCalledImpressionUrl = true;
+            }
+          }, 50);
+        }
+        if (thisImg.completedPercentage === 100) {
+          document.getElementsByClassName('aotter-ad')[0].style.display = 'block';
+        }
+      };
+      xmlHTTP.onloadstart = function() {
+        thisImg.completedPercentage = 0;
+      };
+      xmlHTTP.send();
+    };
+    Image.prototype.completedPercentage = 0;
+  }
+  extendImage();
+</script>
+
+<script>
+  var img = new Image();
+  img.load('/fileThumbnail?url=' + encodeURIComponent('<%= imgSrc %>'));
+  img.setAttribute('class', 'img');
+  if ('<%= adType %>' === 'banner') {
+    document.getElementById('aotter-ad-banner').getElementsByTagName('a')[0].getElementsByTagName('div')[0].appendChild(img);
+  }
+  if ('<%= adType %>' === 'video') {
+    document.getElementById('aotter-ad-video').getElementsByTagName('a')[0].getElementsByTagName('div')[0].appendChild(img);
+  }
+</script>
+
+<script>
+  function postParentMessage(msg, act) {
+    if (act === undefined) {
+      act = 'response';
+    }
+    window.parent.postMessage({
+      act: act,
+      msg: msg
+    }, '*');
+  }
+  function resizeParentIframe(iframeID) {
+    // 將子頁面高度傳到父頁面框架
+    const height = document.body.scrollHeight + 15;
+    postParentMessage({
+      iframeID: iframeID,
+      height: height
+    }, 'resize');
+  }
+</script>
+
+</html>
