@@ -3,30 +3,40 @@
 - 設計一個 javascript sdk，讓開發者可以在自己的網站頁面中顯示廣告
 
 # 如何開始專案
-### Step1. 安裝套件
+### Step 1
+#### clone 專案
+```
+git clone https://github.com/raymondhongray/Aotter-Assignment-SDK.git
+```
+### Step 2
+#### 安裝套件
 ```
 npm install
 ```
 
-### Step2. 編譯 Aotter Assignment SDK
+### Step 3
+#### 編譯 Aotter Assignment SDK
 ```
 npm run build:webpack
 ```
 
-### Step3. 啟動網頁服務
+### Step 4
+#### 啟動網頁伺服器
 
 ```
 npm start
 ```
 
-### Step4. 執行 Selenium 測試
+### Step 5
+#### 執行 Selenium 測試
 
 ```
-# 執行 Selenium 測試 (必須先啟動網頁服務)
+# 執行 Selenium 測試 (必須先啟動網頁伺服器)
 npm run test
 ```
 
-### 在瀏覽器上執行範例網頁
+### Step 6
+#### 在瀏覽器上執行範例網頁
 ```
 http://localhost:3000
 ```
@@ -66,7 +76,7 @@ const aotterAssignmentSDK = require('dist/aotter-assignment-sdk.min');
 ```
 <script>
     acBanner.onAdLoaded(function() {
-        console.log('Banner on-ad-loaded.');
+        // do something
     });
 </script>
 ```
@@ -75,7 +85,7 @@ const aotterAssignmentSDK = require('dist/aotter-assignment-sdk.min');
 ```
 <script>
     acBanner.onAdFailed(function() {
-        console.log('Banner on-ad-failed.');
+        // do something
     });
 </script>
 ```
@@ -84,7 +94,7 @@ const aotterAssignmentSDK = require('dist/aotter-assignment-sdk.min');
 ```
 <script>
     acBanner.onAdImpression(function() {
-        console.log('Banner on-ad-impression.');
+        // do something
     });
 </script>
 ```
